@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>GBP 리뷰 이벤트 등록 | KT플라자</title>
+  <style>
+    :root {
+      --kt-red: #E8002D;
+      --kt-dark: #1C2951;
+      --kt-gray: #64748B;
+      --kt-light: #F8FAFC;
+      --kt-border: #E2E8F0;
+      --kt-green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background: #F1F5F9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 40px;
+    }
+
+    .header {
+      width: 100%;
+      background: var(--kt-dark);
+      padding: 20px 24px 16px;
+      text-align: center;
+    }
+    .header-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
+    .kt-badge { background: var(--kt-red); color: #fff; font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; }
+    .header-title { color: #fff; font-size: 17px; font-weight: 700; }
+    .staff-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; color: #CBD5E1; font-size: 12px; padding: 4px 14px; margin-top: 8px; }
+    .staff-badge span { color: #FCD34D; font-weight: 700; }
+
+    .store-banner { background: var(--kt-red); width: 100%; text-align: center; padding: 10px; color: #fff; font-size: 14px; font-weight: 700; }
+
+    .card { width: 100%; max-width: 480px; background: #fff; border-radius: 16px; margin: 20px 16px 0; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+
+    /* 안내 배너 */
+    .guide-banner { background: linear-gradient(135deg, var(--kt-dark) 0%, #2D3F6B 100%); padding: 18px 24px; color: #fff; }
+    .guide-banner .label { background: var(--kt-red); border-radius: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; display: inline-block; margin-bottom: 8px; }
+    .guide-banner h2 { font-size: 17px; font-weight: 800; line-height: 1.4; margin-bottom: 12px; }
+    .checklist { display: flex; flex-direction: column; gap: 8px; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #CBD5E1; }
+    .checklist-item .dot { width: 6px; height: 6px; background: var(--kt-red); border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .checklist-item b { color: #fff; }
+    .sub-methods { margin-top: 4px; display: flex; flex-direction: column; gap: 3px; }
+    .method { display: flex; align-items: flex-start; gap: 5px; font-size: 12px; color: #94A3B8; }
+    .method .num { background: rgba(255,255,255,0.15); border-radius: 3px; padding: 0 4px; font-size: 10px; font-weight: 700; color: #E2E8F0; flex-shrink: 0; margin-top: 1px; }
+
+    /* 폼 */
+    .form-body { padding: 24px; }
+    .section-title { font-size: 12px; font-weight: 700; color: var(--kt-gray); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--kt-red); display: inline-block; }
+    .field-group { margin-bottom: 18px; }
+    .field-label { display: block; font-size: 13px; font-weight: 600; color: var(--kt-dark); margin-bottom: 7px; }
+    .required { color: var(--kt-red); margin-left: 2px; }
+    .field-hint { font-size: 11px; color: var(--kt-gray); margin-top: 5px; line-height: 1.5; }
+
+    input[type="text"], input[type="tel"] {
+      width: 100%; padding: 13px 14px;
+      border: 1.5px solid var(--kt-border); border-radius: 10px;
+      font-size: 15px; font-family: inherit; color: var(--kt-dark);
+      background: var(--kt-light); outline: none; -webkit-appearance: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus { border-color: var(--kt-red); box-shadow: 0 0 0 3px rgba(232,0,45,0.10); background: #fff; }
+    input.error { border-color: var(--kt-red); background: #FFF5F5; }
+    .error-msg { font-size: 11px; color: var(--kt-red); margin-top: 5px; display: none; }
+    .error-msg.show { display: block; }
+
+    /* 리뷰 체크 */
+    .check-section { background: #F8FAFC; border: 1.5px solid var(--kt-border); border-radius: 12px; padding: 16px; margin-bottom: 18px; }
+    .check-title { font-size: 12px; font-weight: 700; color: var(--kt-gray); margin-bottom: 12px; }
+    .check-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+    .check-row:last-child { margin-bottom: 0; }
+    .custom-check { width: 22px; height: 22px; min-width: 22px; border: 2px solid var(--kt-border); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; margin-top: 1px; background: #fff; }
+    .custom-check.checked { background: var(--kt-green); border-color: var(--kt-green); }
+    .custom-check.checked-red { background: var(--kt-red); border-color: var(--kt-red); }
+    .custom-check svg { display: none; }
+    .custom-check.checked svg, .custom-check.checked-red svg { display: block; }
+    input[type="checkbox"] { display: none; }
+    .check-text { font-size: 13px; color: #334155; line-height: 1.55; flex: 1; }
+    .check-text .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-right: 4px; vertical-align: middle; }
+    .tag-green { background: var(--kt-green); color: #fff; }
+    .tag-red { background: var(--kt-red); color: #fff; }
+    .tag-gray { background: var(--kt-gray); color: #fff; }
+
+    /* 개인정보 동의 */
+    .privacy-section { border: 1.5px solid var(--kt-border); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+    .privacy-header { padding: 12px 16px; font-size: 13px; font-weight: 700; color: var(--kt-dark); border-bottom: 1px solid var(--kt-border); display: flex; align-items: center; gap: 8px; background: #fff; }
+    .privacy-header .ptag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 3px; }
+    .privacy-header .ptag.req { background: var(--kt-red); color: #fff; }
+    .privacy-header .ptag.opt { background: var(--kt-gray); color: #fff; }
+    .privacy-desc { font-size: 11px; color: #475569; padding: 10px 16px; line-height: 1.6; background: #FAFAFA; border-bottom: 1px solid var(--kt-border); }
+    .privacy-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .privacy-table th { background: #F1F5F9; color: var(--kt-dark); font-weight: 700; padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--kt-border); border-right: 1px solid var(--kt-border); }
+    .privacy-table th:last-child { border-right: none; }
+    .privacy-table td { padding: 9px 10px; text-align: center; color: #334155; border-right: 1px solid var(--kt-border); line-height: 1.5; font-size: 11px; }
+    .privacy-table td:last-child { border-right: none; }
+    .privacy-notice { font-size: 11px; color: var(--kt-gray); padding: 8px 16px; line-height: 1.6; background: #FAFAFA; border-top: 1px solid var(--kt-border); }
+    .privacy-agree-row { display: flex; align-items: center; gap: 10px; padding: 13px 16px; cursor: pointer; border-top: 1px solid var(--kt-border); background: #fff; }
+    .agree-label { font-size: 14px; font-weight: 600; color: var(--kt-dark); }
+
+    /* 마케팅 선택 동의 */
+    .marketing-section { border: 1.5px solid var(--kt-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .marketing-header { padding: 12px 16px; font-size: 13px; font-weight: 700; color: var(--kt-dark); border-bottom: 1px solid var(--kt-border); display: flex; align-items: center; gap: 8px; }
+    .marketing-body { padding: 14px 16px; }
+    .marketing-desc { font-size: 11px; color: var(--kt-gray); margin-top: 4px; line-height: 1.5; }
+
+    .divider { border: none; border-top: 1px solid var(--kt-border); margin: 20px 0; }
+
+    .submit-btn { width: 100%; padding: 16px; background: var(--kt-red); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; font-family: inherit; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+    .submit-btn:hover { background: #C4001F; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #CBD5E1; cursor: not-allowed; transform: none; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .success-screen { display: none; padding: 40px 24px; text-align: center; }
+    .success-screen.show { display: block; }
+    .success-icon { width: 72px; height: 72px; background: var(--kt-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .success-screen h3 { font-size: 22px; font-weight: 800; color: var(--kt-dark); margin-bottom: 10px; }
+    .success-screen p { font-size: 14px; color: var(--kt-gray); line-height: 1.7; }
+    .success-detail { background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 16px; margin-top: 20px; text-align: left; }
+    .success-detail .d-row { display: flex; font-size: 13px; margin-bottom: 6px; gap: 8px; }
+    .success-detail .d-row:last-child { margin-bottom: 0; }
+    .success-detail .d-label { color: var(--kt-gray); min-width: 80px; }
+    .success-detail .d-value { color: var(--kt-dark); font-weight: 600; }
+    .btn-next { width: 100%; padding: 14px; background: var(--kt-dark); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; margin-top: 20px; }
+
+    .footer-note { max-width: 480px; width: 100%; padding: 14px 20px; margin-top: 4px; }
+    .footer-note p { font-size: 11px; color: #94A3B8; line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-logo">
+      <div class="kt-badge">kt plaza</div>
+      <div class="header-title">GBP 리뷰 이벤트</div>
+    </div>
+    <div class="staff-badge"><span>직원 전용</span> · 고객 리뷰 등록 페이지</div>
+  </div>
+
+  <div class="store-banner" id="storeBanner">매장 확인 중...</div>
+
+  <div class="card">
+
+    <!-- 안내 배너 -->
+    <div class="guide-banner">
+      <div class="label">등록 전 확인사항</div>
+      <h2>고객 등록 전,<br>아래 3가지를 먼저 확인해주세요.</h2>
+      <div class="checklist">
+        <div class="checklist-item">
+          <div class="dot"></div>
+          <div>
+            <b>구글 리뷰 작성 방법 확인</b> (아래 2가지 중 하나)
+            <div class="sub-methods">
+              <div class="method"><span class="num">방법 1</span>매장 비치 QR 스캔 후 구글 리뷰 페이지에서 직접 작성</div>
+              <div class="method"><span class="num">방법 2</span>구글에서 KT플라자 매장 검색 후 리뷰 탭에서 작성</div>
+            </div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="dot"></div>
+          <div><b>별점 5점</b> 및 <b>텍스트 리뷰</b> 포함 여부 확인</div>
+        </div>
+        <div class="checklist-item">
+          <div class="dot"></div>
+          <div>리뷰에 표시된 <b>구글 닉네임</b>을 확인 후 아래 입력란에 기재</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 폼 영역 -->
+    <div class="form-body" id="formArea">
+      <div class="section-title">고객 정보 입력</div>
+
+      <!-- 구글 닉네임 -->
+      <div class="field-group">
+        <label class="field-label" for="nickname">구글 닉네임 <span class="required">*</span></label>
+        <input type="text" id="nickname" placeholder="리뷰에 표시된 이름 그대로 입력" autocomplete="off" />
+        <div class="error-msg" id="nicknameError">구글 닉네임을 입력해 주세요.</div>
+        <div class="field-hint">구글 리뷰 화면에 표시된 이름을 그대로 입력해 주세요. 예) 홍길동, kildong0306</div>
+      </div>
+
+      <!-- 휴대폰 번호 -->
+      <div class="field-group">
+        <label class="field-label" for="phone">고객 휴대폰 번호 <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="010-0000-0000" inputmode="numeric" maxlength="13" autocomplete="off" />
+        <div class="error-msg" id="phoneError">올바른 휴대폰 번호를 입력해 주세요.</div>
+        <div class="field-hint">기프티쇼 문자 발송에 사용됩니다.</div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- 리뷰 확인 체크 -->
+      <div class="check-section">
+        <div class="check-title">리뷰 확인 체크리스트 (직원 확인용)</div>
+
+        <div class="check-row" onclick="toggleCheck('starCheck','green')">
+          <div class="custom-check" id="starCheck_box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <input type="checkbox" id="starCheck" />
+          <div class="check-text"><span class="tag tag-green">확인</span>구글 리뷰 별점 5점 등록 완료</div>
+        </div>
+
+        <div class="check-row" onclick="toggleCheck('reviewCheck','green')">
+          <div class="custom-check" id="reviewCheck_box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <input type="checkbox" id="reviewCheck" />
+          <div class="check-text"><span class="tag tag-green">확인</span>구글 리뷰 텍스트 내용 등록 완료</div>
+        </div>
+      </div>
+      <div class="error-msg" id="checkError" style="margin-top:-10px; margin-bottom:16px;">별점 및 텍스트 리뷰 등록 여부를 모두 확인해 주세요.</div>
+
+      <hr class="divider" />
+
+      <!-- 개인정보 동의: 경품 이벤트 (필수) -->
+      <div class="privacy-section">
+        <div class="privacy-header">
+          <span class="ptag req">필수</span>
+          경품 이벤트 개인정보 수집·이용 동의
+        </div>
+        <div class="privacy-desc">
+          고객님의 개인정보는 「개인정보 보호법」에 따라 ㈜케이티엠엔에스가 수집·이용함에 있어 본인의 동의를 얻어야 하는 정보입니다.<br>
+          입력된 개인정보는 아래 목적으로만 이용되며, 동의받은 목적 외로 활용되지 않습니다.
+        </div>
+        <table class="privacy-table">
+          <thead>
+            <tr>
+              <th>수집·이용 목적</th>
+              <th>수집 항목</th>
+              <th>보유 및 이용기간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>경품(기프티쇼) 지급</td>
+              <td>닉네임, 휴대폰 번호</td>
+              <td>경품 지급 후<br>1개월 이내 파기</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="privacy-notice">
+          ※ 위 개인정보 수집·이용 동의를 거부할 권리가 있습니다. 단, 동의를 거부하실 경우 경품 지급이 어려울 수 있습니다.
+        </div>
+        <div class="privacy-agree-row" onclick="toggleCheck('privacyEventCheck','red')">
+          <div class="custom-check" id="privacyEventCheck_box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <input type="checkbox" id="privacyEventCheck" />
+          <div class="agree-label">동의합니다.</div>
+        </div>
+      </div>
+      <div class="error-msg" id="privacyEventError" style="margin-bottom:16px;">경품 이벤트 개인정보 수집·이용에 동의해 주세요.</div>
+
+      <!-- 마케팅 동의 (선택) -->
+      <div class="marketing-section">
+        <div class="marketing-header">
+          <span class="ptag opt">선택</span>
+          마케팅 활용 동의
+        </div>
+        <div class="marketing-body">
+          <div class="check-row" style="margin-bottom:0;" onclick="toggleCheck('marketingCheck','gray')">
+            <div class="custom-check" id="marketingCheck_box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <input type="checkbox" id="marketingCheck" />
+            <div class="check-text">
+              KT플라자 이벤트·혜택 문자 수신에 동의합니다. (선택)
+              <div class="marketing-desc">KT플라자는 앞으로도 구글 리뷰, 네이버 리뷰 등 다양한 경품 이벤트와 고객 혜택 프로모션을 지속적으로 운영할 예정입니다. 동의하시면 다음 이벤트 안내를 가장 먼저 받아보실 수 있습니다.<br>※ 미동의 시에도 현재 경품 수령에는 영향이 없습니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()" disabled>등록 완료</button>
+    </div>
+
+  
+  <!-- 완료 팝업 모달 -->
+  <div id="completeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:20px; padding:32px 28px; max-width:320px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="width:64px; height:64px; background:#059669; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 16L13 22L25 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p style="font-size:16px; font-weight:800; color:#1C2951; line-height:1.5; margin-bottom:8px;">리뷰 이벤트 참여 위한<br>고객 등록이 완료되었습니다!</p>
+      <p style="font-size:12px; color:#64748B; margin-bottom:24px;">기프티쇼는 이벤트 종료 후, 9월 중순 발송 예정입니다.</p>
+      <button onclick="closeModal()" style="width:100%; padding:14px; background:#E8002D; color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer;">확인</button>
+    </div>
+  </div>
+
+  <!-- 성공 화면 -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M8 18L15 25L28 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>등록 완료!</h3>
+      <p>고객 정보가 정상적으로 저장되었습니다.<br>기프티쇼는 이벤트 종료 후, 9월 중순 발송 예정입니다.</p>
+      <div class="success-detail" id="successDetail"></div>
+      <button class="btn-next" onclick="resetForm()">다음 고객 등록하기</button>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <p>
+      · 본 페이지는 KT M&amp;S 채널마케팅팀 직원 전용입니다.<br>
+      · 수집된 정보는 기프티쇼 발송 및 이벤트 운영 목적으로만 사용됩니다.<br>
+      · 허위 등록 적발 시 시상 대상에서 제외될 수 있습니다.
+    </p>
+  </div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhDZir0ISlixyop8fZSDxQXzbBJzYtegnAZu4wEgjffBAxc7Qv99bsUVBb8c2fiOv0/exec';
+
+  const params    = new URLSearchParams(window.location.search);
+  const storeName = decodeURIComponent(params.get('store') || '');
+
+  if (storeName) {
+    document.getElementById('storeBanner').textContent = '📍 ' + storeName;
+  } else {
+    document.getElementById('storeBanner').textContent = '⚠️ 매장 정보 없음 — QR 코드를 다시 스캔해주세요';
+    document.getElementById('storeBanner').style.background = '#92400E';
+  }
+
+  function toggleCheck(id, color) {
+    const cb  = document.getElementById(id);
+    const box = document.getElementById(id + '_box');
+    cb.checked = !cb.checked;
+    box.className = 'custom-check' + (cb.checked ? (color === 'red' ? ' checked-red' : ' checked') : '');
+    updateSubmitBtn();
+  }
+
+  function updateSubmitBtn() {
+    const btn = document.getElementById('submitBtn');
+    const agreed = document.getElementById('privacyEventCheck').checked;
+    btn.disabled = !agreed;
+  }
+
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if      (v.length <= 3)  e.target.value = v;
+    else if (v.length <= 7)  e.target.value = v.slice(0,3) + '-' + v.slice(3);
+    else                     e.target.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
+  });
+
+  function validate() {
+    let ok = true;
+
+    const nick = document.getElementById('nickname').value.trim();
+    setErr('nickname', 'nicknameError', !nick);
+    if (!nick) ok = false;
+
+    const phone = document.getElementById('phone').value.replace(/\D/g,'');
+    setErr('phone', 'phoneError', phone.length < 10);
+    if (phone.length < 10) ok = false;
+
+    const checkOk = document.getElementById('starCheck').checked && document.getElementById('reviewCheck').checked;
+    document.getElementById('checkError').classList.toggle('show', !checkOk);
+    if (!checkOk) ok = false;
+
+    const evtOk = document.getElementById('privacyEventCheck').checked;
+    document.getElementById('privacyEventError').classList.toggle('show', !evtOk);
+    if (!evtOk) ok = false;
+
+    return ok;
+  }
+
+  function setErr(inputId, errId, isErr) {
+    document.getElementById(inputId).classList.toggle('error', isErr);
+    document.getElementById(errId).classList.toggle('show', isErr);
+  }
+
+  async function handleSubmit() {
+    if (!validate()) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>등록 중...';
+
+    const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+    const payload = {
+      timestamp:          now,
+      store:              storeName || '미확인',
+      nickname:           document.getElementById('nickname').value.trim(),
+      phone:              document.getElementById('phone').value.trim(),
+      starChecked:        document.getElementById('starCheck').checked          ? 'Y' : 'N',
+      reviewChecked:      document.getElementById('reviewCheck').checked        ? 'Y' : 'N',
+      privacyEventAgreed: document.getElementById('privacyEventCheck').checked  ? 'Y' : 'N',
+      marketingAgreed:    document.getElementById('marketingCheck').checked     ? 'Y' : 'N',
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showSuccess(payload, now);
+    } catch(e) {
+      btn.disabled = false;
+      btn.innerHTML = '등록 완료';
+      alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  }
+
+  function showSuccess(d, ts) {
+    const modal = document.getElementById('completeModal');
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('completeModal').style.display = 'none';
+    resetForm();
+  }
+
+  function row(label, value) {
+    return '<div class="d-row"><span class="d-label">' + label + '</span><span class="d-value">' + value + '</span></div>';
+  }
+
+  function resetForm() {
+    document.getElementById('nickname').value = '';
+    document.getElementById('phone').value    = '';
+    ['starCheck','reviewCheck','privacyEventCheck','marketingCheck'].forEach(id => {
+      document.getElementById(id).checked = false;
+      document.getElementById(id+'_box').className = 'custom-check';
+    });
+    ['nicknameError','phoneError','checkError','privacyEventError'].forEach(id =>
+      document.getElementById(id).classList.remove('show'));
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').innerHTML = '등록 완료';
+    document.getElementById('formArea').style.display = 'block';
+    document.getElementById('successScreen').classList.remove('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
