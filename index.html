@@ -391,9 +391,11 @@
     };
 
     try {
-      // hidden form으로 Apps Script에 POST (CORS 우회)
-      document.getElementById('hiddenPayload').value = JSON.stringify(payload);
-      document.getElementById('hiddenForm').submit();
+      // GET 방식으로 데이터 전송 (리다이렉트 문제 우회)
+      const qs = Object.entries(payload)
+        .map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+        .join('&');
+      fetch(SCRIPT_URL + '?' + qs, { mode: 'no-cors' });
       showSuccess(payload, now);
     } catch(e) {
       btn.disabled = false;
@@ -433,10 +435,5 @@
   }
 </script>
 
-<!-- hidden form for Apps Script POST (CORS 우회) -->
-<form id="hiddenForm" method="POST" action="https://script.google.com/macros/s/AKfycbyhDZir0ISlixyop8fZSDxQXzbBJzYtegnAZu4wEgjffBAxc7Qv99bsUVBb8c2fiOv0/exec" target="hiddenFrame">
-  <input type="hidden" id="hiddenPayload" name="payload" value="">
-</form>
-<iframe id="hiddenFrame" name="hiddenFrame" style="display:none;"></iframe>
 </body>
 </html>
