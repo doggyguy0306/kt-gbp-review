@@ -391,11 +391,9 @@
     };
 
     try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // hidden form으로 Apps Script에 POST (CORS 우회)
+      document.getElementById('hiddenPayload').value = JSON.stringify(payload);
+      document.getElementById('hiddenForm').submit();
       showSuccess(payload, now);
     } catch(e) {
       btn.disabled = false;
@@ -434,5 +432,11 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
+
+<!-- hidden form for Apps Script POST (CORS 우회) -->
+<form id="hiddenForm" method="POST" action="https://script.google.com/macros/s/AKfycbyhDZir0ISlixyop8fZSDxQXzbBJzYtegnAZu4wEgjffBAxc7Qv99bsUVBb8c2fiOv0/exec" target="hiddenFrame">
+  <input type="hidden" id="hiddenPayload" name="payload" value="">
+</form>
+<iframe id="hiddenFrame" name="hiddenFrame" style="display:none;"></iframe>
 </body>
 </html>
