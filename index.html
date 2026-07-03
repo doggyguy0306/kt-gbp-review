@@ -391,11 +391,10 @@
     };
 
     try {
-      const params = new URLSearchParams();
-      params.append('payload', JSON.stringify(payload));
       await fetch(SCRIPT_URL, {
         method: 'POST', mode: 'no-cors',
-        body: params
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
       showSuccess(payload, now);
     } catch(e) {
